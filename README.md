@@ -5,4 +5,4 @@
 - Whelk population (Observational Study)
 - Drilling Gastropod, Barnacle Pop experimental Study
 
-More coming later
+Creating a model relating barnacle and gastropod populations and poking it.
