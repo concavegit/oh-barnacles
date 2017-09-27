@@ -5,7 +5,7 @@ Copyright 2017 Allen Downey
 
 License: https://creativecommons.org/licenses/by/4.0)
 """
-
+#!/usr/bin/env python
 #TODO: check that we have at least version 3.6
 
 import inspect
