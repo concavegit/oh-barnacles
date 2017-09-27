@@ -1,0 +1,18 @@
+#+name: pre
+#+BEGIN_SRC python
+  import pandas as pd
+  import matplotlib.pyplot as plt
+
+  plt.style.use('ggplot')
+#+END_SRC
+
+#+BEGIN_SRC python :noweb yes :results file :exports both :var fname="graphs/wolves.png"
+  <<pre>>
+  wolves = pd.read_csv('data/wolf-data.csv').set_index('Year')
+  ax = wolves.plot()
+  ax.figure.savefig(fname)
+  return fname
+#+END_SRC
+
+#+RESULTS:
+[[file:graphs/wolves.png]]
