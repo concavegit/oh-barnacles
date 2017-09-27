@@ -1,9 +1,16 @@
 #+name: pre
 #+BEGIN_SRC python
-  import pandas as pd
   import matplotlib.pyplot as plt
+  import sympy as sp
+  import pandas as pd
+  import seaborn as sns
+  import statsmodels.formula.api as sm
 
   plt.style.use('ggplot')
+
+  elk = pd.read_csv('data/elk_data_set.csv').set_index('Year')
+  wolves = pd.read_csv('data/wolf_data_set.csv').set_index('Year')
+  ew = wolves.join(elk).dropna()
 #+END_SRC
 
 #+RESULTS: pre
@@ -30,3 +37,31 @@
 
 #+RESULTS:
 [[file:graphs/elk.png]]
+
+#+BEGIN_SRC python :noweb yes :results file :exports both :var fname="graphs/wolvesvelk.png"
+  <<pre>>
+  sns.lmplot('Wolves', 'Elk', ew)
+  w = sp.symbols('w')
+  rhs = - 3 * (w - 142) ** 2 + 12000
+  plt.plot(range(90,180), [rhs.subs(w, x) for x in range(90,180)])
+  ax = plt.gca()
+  ax.figure.savefig(fname)
+  print(ew)
+  return fname
+#+END_SRC
+
+#+RESULTS:
+[[file:graphs/wolvesvelk.png]]
+
+#+BEGIN_SRC python :noweb yes :results output :exports both
+  <<pre>>
+  print(ew)
+#+END_SRC
+
+#+RESULTS:
+:       Wolves      Elk
+: Year                 
+: 2001   132.0  11921.0
+: 2003   174.0   9227.0
+: 2011    98.0   6600.0
+: 2015    98.0   5500.0
