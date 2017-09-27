@@ -8,7 +8,7 @@
 
 #+BEGIN_SRC python :noweb yes :results file :exports both :var fname="graphs/wolves.png"
   <<pre>>
-  wolves = pd.read_csv('data/wolf-data.csv').set_index('Year')
+  wolves = pd.read_csv('data/wolf_data_set.csv').set_index('Year')
   ax = wolves.plot()
   ax.figure.savefig(fname)
   return fname
@@ -16,3 +16,14 @@
 
 #+RESULTS:
 [[file:graphs/wolves.png]]
+
+#+BEGIN_SRC python :noweb yes :results file :exports both :var fname="graphs/elk.png"
+  <<pre>>
+  elk = pd.read_csv('data/elk_data_set.csv').set_index('Year')
+  ax = elk.plot()
+  ax.figure.savefig(fname)
+  return fname
+#+END_SRC
+
+#+RESULTS:
+[[file:graphs/elk.png]]
