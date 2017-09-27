@@ -6,6 +6,9 @@
   plt.style.use('ggplot')
 #+END_SRC
 
+#+RESULTS: pre
+: None
+
 #+BEGIN_SRC python :noweb yes :results file :exports both :var fname="graphs/wolves.png"
   <<pre>>
   wolves = pd.read_csv('data/wolf_data_set.csv').set_index('Year')
