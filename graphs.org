@@ -1,5 +1,6 @@
 #+name: pre
 #+BEGIN_SRC python
+  from modsim import (System,TimeSeries)
   import matplotlib.pyplot as plt
   import numpy as np
   import pandas as pd
@@ -79,3 +80,24 @@
 : 2003   174.0   9227.0  8928.00000000000
 : 2011    98.0   6600.0  6192.00000000000
 : 2015    98.0   5500.0  6192.00000000000
+
+#+BEGIN_SRC python :noweb yes :results file :exports both :var fname="wolf-death.png"
+  <<pre>>
+  wolvesDying = System(p0 = 139, t0 = 1915)
+
+  def kill_wolves(system, t_end):
+      system.results = TimeSeries()
+      for y in np.arange(system.t0, t_end - 1):
+          system.results[y] = - (y - t_end + 20) ** 2 + 170
+
+  ax = wolves.plot()
+  kill_wolves(wolvesDying, 1930)
+  ax = wolvesDying.results.plot(ax = ax)
+  ax.set_xlim(1915,1923)
+  ax.figure.savefig(fname)
+
+  return fname
+#+END_SRC
+
+#+RESULTS:
+[[file:wolf-death.png]]
