@@ -46,8 +46,11 @@
   sns.lmplot('Wolves', 'Elk', ew)
   plt.plot(np.arange(90, 180), [rhs.subs(w, x) for x in np.arange(90, 180)])
   ax = plt.gca()
+  ax.set_title('Fit between Elk and Wolves')
+  ax.set_xlabel('Wolf Population')
+  ax.set_ylabel('Elk Population')
+  plt.tight_layout()
   ax.figure.savefig(fname)
-  print(ew)
   return fname
 #+END_SRC
 
@@ -81,7 +84,7 @@
 : 2011    98.0   6600.0  6192.00000000000
 : 2015    98.0   5500.0  6192.00000000000
 
-#+BEGIN_SRC python :noweb yes :results file :exports both :var fname="wolf-death.png"
+#+BEGIN_SRC python :noweb yes :results file :exports both :var fname="graphs/wolf-death.png"
   <<pre>>
   wolvesDying = System(p0 = 139, t0 = 1915)
 
@@ -93,11 +96,15 @@
   ax = wolves.plot()
   kill_wolves(wolvesDying, 1930)
   ax = wolvesDying.results.plot(ax = ax)
+  ax.set_title('Wolf Population when Hunting is Legal')
+  ax.legend(['Wolves', 'Simulation'])
   ax.set_xlim(1915,1923)
+  ax.set_ylabel('Population')
+  plt.tight_layout()
   ax.figure.savefig(fname)
 
   return fname
 #+END_SRC
 
 #+RESULTS:
-[[file:wolf-death.png]]
+[[file:graphs/wolf-death.png]]
