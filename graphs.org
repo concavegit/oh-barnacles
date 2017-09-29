@@ -1,0 +1,110 @@
+#+name: pre
+#+BEGIN_SRC python
+  from modsim import (System,TimeSeries)
+  import matplotlib.pyplot as plt
+  import numpy as np
+  import pandas as pd
+  import seaborn as sns
+  import statsmodels.formula.api as sm
+  import sympy as sp
+
+  plt.style.use('ggplot')
+
+  elk = pd.read_csv('data/elk_data_set.csv').set_index('Year')
+  wolves = pd.read_csv('data/wolf_data_set.csv').set_index('Year')
+  ew = wolves.join(elk).dropna()
+  w = sp.symbols('w')
+  rhs = - 3 * (w - 142) ** 2 + 12000
+#+END_SRC
+
+#+RESULTS: pre
+: None
+
+#+BEGIN_SRC python :noweb yes :results file :exports both :var fname="graphs/wolves.png"
+  <<pre>>
+  ax = wolves.plot()
+  ax.figure.savefig(fname)
+  return fname
+#+END_SRC
+
+#+RESULTS:
+[[file:graphs/wolves.png]]
+
+#+BEGIN_SRC python :noweb yes :results file :exports both :var fname="graphs/elk.png"
+  <<pre>>
+  elk = pd.read_csv('data/elk_data_set.csv').set_index('Year')
+  ax = elk.plot()
+  ax.figure.savefig(fname)
+  return fname
+#+END_SRC
+
+#+RESULTS:
+[[file:graphs/elk.png]]
+
+#+BEGIN_SRC python :noweb yes :results file :exports both :var fname="graphs/wolvesvelk.png"
+  <<pre>>
+  sns.lmplot('Wolves', 'Elk', ew)
+  plt.plot(np.arange(90, 180), [rhs.subs(w, x) for x in np.arange(90, 180)])
+  ax = plt.gca()
+  ax.set_title('Fit between Elk and Wolves')
+  ax.set_xlabel('Wolf Population')
+  ax.set_ylabel('Elk Population')
+  plt.tight_layout()
+  ax.figure.savefig(fname)
+  return fname
+#+END_SRC
+
+#+RESULTS:
+[[file:graphs/wolvesvelk.png]]
+
+#+BEGIN_SRC python :noweb yes :results output :exports both
+  <<pre>>
+  print(ew)
+#+END_SRC
+
+#+RESULTS:
+:       Wolves      Elk
+: Year                 
+: 2001   132.0  11921.0
+: 2003   174.0   9227.0
+: 2011    98.0   6600.0
+: 2015    98.0   5500.0
+
+#+BEGIN_SRC python :noweb yes :results output :exports both
+  <<pre>>
+  ew['predElk'] = wolves.apply(lambda row: rhs.subs(w, row['Wolves']), axis=1)
+  print(ew)
+#+END_SRC
+
+#+RESULTS:
+:       Wolves      Elk           predElk
+: Year                                   
+: 2001   132.0  11921.0  11700.0000000000
+: 2003   174.0   9227.0  8928.00000000000
+: 2011    98.0   6600.0  6192.00000000000
+: 2015    98.0   5500.0  6192.00000000000
+
+#+BEGIN_SRC python :noweb yes :results file :exports both :var fname="graphs/wolf-death.png"
+  <<pre>>
+  wolvesDying = System(p0 = 139, t0 = 1915)
+
+  def kill_wolves(system, t_end):
+      system.results = TimeSeries()
+      for y in np.arange(system.t0, t_end - 1):
+          system.results[y] = - (y - t_end + 20) ** 2 + 170
+
+  ax = wolves.plot()
+  kill_wolves(wolvesDying, 1930)
+  ax = wolvesDying.results.plot(ax = ax)
+  ax.set_title('Wolf Population when Hunting is Legal')
+  ax.legend(['Wolves', 'Simulation'])
+  ax.set_xlim(1915,1923)
+  ax.set_ylabel('Population')
+  plt.tight_layout()
+  ax.figure.savefig(fname)
+
+  return fname
+#+END_SRC
+
+#+RESULTS:
+[[file:graphs/wolf-death.png]]
