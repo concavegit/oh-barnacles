@@ -14,7 +14,7 @@ def historical_data_set(data_set = "data/wolf_data_set.csv", index_col="Year"):
 	data_set : The path to the csv file needed
 	index_col : The column from which to index the data.
 	"""
-	data = pd.read_csv(data_set, index_col=index_col)	
+	data = pd.read_csv(data_set, index_col=index_col)
 	return data
 
 def kill_wolves(starting_amount=139, starting_year=1915, ending_year=1922):
@@ -24,7 +24,10 @@ def kill_wolves(starting_amount=139, starting_year=1915, ending_year=1922):
 	"""
 	period = np.arange(starting_year, ending_year, .01)
 	values = starting_amount - (period - ending_year + 20) ** 2 + 170
-	
+	for i in np.arange(len(values)):
+                if values[i] < 0:
+                        values[i] = 0
+
 	graph = pd.DataFrame(values, period)
 	return graph
 
@@ -40,12 +43,12 @@ def reintroduce_wolves(starting_amount = 139, starting_year = 1995, ending_year=
 	period = np.arange(starting_year, ending_year , .01)
 	values = starting_amount+growth_rate*(np.sin(multiplier*np.pi*period))
 	graph = pd.DataFrame(values, period)
-	return graph	
-	
+	return graph
+
 def get_elk_data(wolf_graph, starting_year = 139, ending_year = 2025):
 	"""
 	"""
-	period = np.arange(starting_year, ending_year, .01) 
+	period = np.arange(starting_year, ending_year, .01)
 	values = -3 * (wolf_graph - 142)**2 + 12000
 	graph = pd.DataFrame(values, period)
 	return graph
@@ -68,7 +71,7 @@ def wolf_summary():
 	ax.legend(loc="best")
 	ax.set_title("Wolf population data model")
 	pylab.show()
- 
+
 # Now, let's start with today's data and see what happens if we legalize wolf hunting in 2017.
 # as of this year, we have 108 wolves. We can look at elk data after.
 wolf_killing_graph = kill_wolves(108, 2017, 2037)
