@@ -17,19 +17,22 @@ def historical_data_set(data_set = "data/wolf_data_set.csv", index_col="Year"):
 	data = pd.read_csv(data_set, index_col=index_col)	
 	return data
 
-def kill_wolves(base_plot,starting_amount=139, starting_year=1915, ending_year=1922):
+def kill_wolves(starting_amount=139, starting_year=1915, ending_year=1922):
 	"""
 	Simulates wolf hunting in yellowstone based on historical data.
+	TODO Eliminate numbers of wolves less than 0
 	"""
 	period = np.arange(starting_year, ending_year, .01)
 	values = starting_amount - (period - ending_year + 20) ** 2 + 170
+	
 	graph = pd.DataFrame(values, period)
 	return graph
 
 
-def reintroduce_wolves(base_plot, starting_amount = 139, starting_year = 1995, ending_year=2025):
+def reintroduce_wolves(starting_amount = 139, starting_year = 1995, ending_year=2025):
 	"""
 	Reintroduces wolves to population.
+	TODO Add dampening factor to sine function so that as time goes on the amplitude decreases.
 	"""
 	# tune the growth rate or multiplier to tune the model.
 	growth_rate = 40
@@ -39,7 +42,7 @@ def reintroduce_wolves(base_plot, starting_amount = 139, starting_year = 1995, e
 	graph = pd.DataFrame(values, period)
 	return graph	
 	
-def get_and_plot_elk_data(base_plot, wolf_graph, starting_year = 139, ending_year = 2025):
+def get_elk_data(wolf_graph, starting_year = 139, ending_year = 2025):
 	"""
 	"""
 	period = np.arange(starting_year, ending_year, .01) 
@@ -66,5 +69,15 @@ def wolf_summary():
 	ax.set_title("Wolf population data model")
 	pylab.show()
  
-
-wolf_summary()
+# Now, let's start with today's data and see what happens if we legalize wolf hunting in 2017.
+# as of this year, we have 108 wolves. We can look at elk data after.
+wolf_killing_graph = kill_wolves(108, 2017, 2037)
+fig, ax = plt.pyplot.subplots()
+ax.plot(wolf_killing_graph, label="Wolf prediction.")
+elk_graph = get_elk_data(wolf_killing_graph, 2017, 2037)
+ax.plot(elk_graph, label="Elk prediction")
+ax.set_xlabel("Years")
+ax.set_ylabel("Population")
+ax.set_ylim([0, 13000])
+ax.set_title("Wolf and Elk Populations if Wolf Hunting was Legalized in 2017")
+pylab.show()
