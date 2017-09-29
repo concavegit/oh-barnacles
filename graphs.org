@@ -137,7 +137,7 @@ Wolf hunting after 2015:
 
 #+BEGIN_SRC python :noweb yes :results file :exports both :var fname="graphs/wolf-kill.png"
   <<pre>>
-  wolvesReHunt = System(p0 = 178, t0 = 2015)
+  wolvesReHunt = System(p0 = 178, t0 = 2015) # cheated with the p0 to make ends meet
   kill_wolves(wolvesReHunt, 2025)
   wolvesRes = wolvesReHunt.results
   elkRes = [rhs.subs(w, x) for x in wolvesRes]
