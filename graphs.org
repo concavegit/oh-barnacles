@@ -91,7 +91,7 @@
   def kill_wolves(system, t_end):
       system.results = TimeSeries()
       for y in np.arange(system.t0, t_end - 1):
-          system.results[y] = - (y - t_end + 20) ** 2 + 170
+          system.results[y] = - (y - t_end + 20) ** 2 + system.p0 + 26
 
   ax = wolves.plot()
   kill_wolves(wolvesDying, 1930)
