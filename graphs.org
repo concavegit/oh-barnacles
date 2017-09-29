@@ -8,6 +8,8 @@
   import statsmodels.formula.api as sm
   import sympy as sp
 
+  plt.rc('text', usetex=True)
+  plt.rc('font', family='serif')
   plt.style.use('ggplot')
 
   elk = pd.read_csv('data/elk_data_set.csv').set_index('Year')
@@ -63,7 +65,7 @@
 #+END_SRC
 
 #+RESULTS:
-[[file:graphs/wolvesvelk.png]]
+[[file:]]
 
 #+BEGIN_SRC python :noweb yes :results output :exports both
   <<pre>>
@@ -71,12 +73,12 @@
 #+END_SRC
 
 #+RESULTS:
-:       Wolves      Elk
-: Year                 
-: 2001   132.0  11921.0
-: 2003   174.0   9227.0
-: 2011    98.0   6600.0
-: 2015    98.0   5500.0
+:        Historical Wolf Population      Elk
+: Year                                      
+: 2001                        132.0  11921.0
+: 2003                        174.0   9227.0
+: 2011                         98.0   6600.0
+: 2015                         98.0   5500.0
 
 #+BEGIN_SRC python :noweb yes :results output :exports both
   <<pre>>
@@ -85,12 +87,6 @@
 #+END_SRC
 
 #+RESULTS:
-:       Wolves      Elk           predElk
-: Year                                   
-: 2001   132.0  11921.0  11700.0000000000
-: 2003   174.0   9227.0  8928.00000000000
-: 2011    98.0   6600.0  6192.00000000000
-: 2015    98.0   5500.0  6192.00000000000
 
 #+BEGIN_SRC python :noweb yes :results file :exports both :var fname="graphs/wolf-death.png"
   <<pre>>
@@ -127,6 +123,9 @@
   ax = reintroduce_wolves(wolvesRe, 2025).plot()
   wolves.plot(ax = ax)
   ax.set_xlim(1995,2015)
+  ax.set_title('Wolf Population after Reintroduction')
+  ax.set_ylabel('Wolf Population')
+  ax.legend(['Predicted', 'Actual'])
   ax.figure.savefig(fname)
   return fname
 #+END_SRC
@@ -140,15 +139,18 @@ Wolf hunting after 2015:
   <<pre>>
   wolvesReHunt = System(p0 = 178, t0 = 2015)
   kill_wolves(wolvesReHunt, 2025)
-  # ew[ 'predElk'] = wolves.apply(lambda row: rhs.subs(w, row['Wolves']), axis=1)
   wolvesRes = wolvesReHunt.results
   elkRes = [rhs.subs(w, x) for x in wolvesRes]
   for x in range(len(elkRes)):
       if elkRes[x] < 0:
           elkRes[x] = 0
-  plt.plot(np.arange(2015,2024), elkRes)
-  ax = plt.gca()
-  wolvesRes.plot(ax = ax)
+  ax = wolvesRes.plot()
+  ax.plot(np.arange(2015,2024), elkRes)
+  ax.set_xlabel('Year')
+  ax.set_ylabel('Population')
+  ax.set_title('Wolves and Elk after Wolf Hunting is Legalized')
+  ax.legend(['Wolves', 'Elk'])
+  plt.tight_layout()
   ax.figure.savefig(fname)
   return fname
 #+END_SRC
