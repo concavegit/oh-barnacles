@@ -15,6 +15,14 @@
   ew = wolves.join(elk).dropna()
   w = sp.symbols('w')
   rhs = - 3 * (w - 142) ** 2 + 12000
+
+  def kill_wolves(system, t_end):
+      system.results = TimeSeries()
+      for y in np.arange(system.t0, t_end - 1):
+          system.results[y] = - (y - t_end + 20) ** 2 + system.p0 + 26
+          if system.results[y] < 0:
+              system.results[y] = 0
+
 #+END_SRC
 
 #+RESULTS: pre
@@ -88,11 +96,6 @@
   <<pre>>
   wolvesDying = System(p0 = 139, t0 = 1915)
 
-  def kill_wolves(system, t_end):
-      system.results = TimeSeries()
-      for y in np.arange(system.t0, t_end - 1):
-          system.results[y] = - (y - t_end + 20) ** 2 + system.p0 + 26
-
   ax = wolves.plot()
   kill_wolves(wolvesDying, 1930)
   ax = wolvesDying.results.plot(ax = ax)
@@ -130,3 +133,25 @@
 
 #+RESULTS:
 [[file:graphs/wolf-reintroduce.png]]
+
+Wolf hunting after 2015:
+
+#+BEGIN_SRC python :noweb yes :results file :exports both :var fname="graphs/wolf-kill.png"
+  <<pre>>
+  wolvesReHunt = System(p0 = 178, t0 = 2015)
+  kill_wolves(wolvesReHunt, 2025)
+  # ew[ 'predElk'] = wolves.apply(lambda row: rhs.subs(w, row['Wolves']), axis=1)
+  wolvesRes = wolvesReHunt.results
+  elkRes = [rhs.subs(w, x) for x in wolvesRes]
+  for x in range(len(elkRes)):
+      if elkRes[x] < 0:
+          elkRes[x] = 0
+  plt.plot(np.arange(2015,2024), elkRes)
+  ax = plt.gca()
+  wolvesRes.plot(ax = ax)
+  ax.figure.savefig(fname)
+  return fname
+#+END_SRC
+
+#+RESULTS:
+[[file:graphs/wolf-kill.png]]
