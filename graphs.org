@@ -108,3 +108,25 @@
 
 #+RESULTS:
 [[file:graphs/wolf-death.png]]
+
+#+BEGIN_SRC python :noweb yes :results file :exports both :var fname="graphs/wolf-reintroduce.png"
+  <<pre>>
+  def reintroduce_wolves(system, t_end):
+      growth_rate = 40
+      multiplier = 0.1
+      period = np.arange(system.t0, t_end, 0.01)
+      # values = system.p0 - 25 + 1 / (period - system.t0 + 1) * growth_rate * (3 * np.sin(1.1 * multiplier * np.pi * period) )
+      quadCor = (0.1 * (period - system.t0 + 10) ** 2)
+      values = system.p0 + growth_rate * 3 * 2 * np.sin(1.1 * multiplier * np.pi * period) / (period - system.t0 + 1) - quadCor + 40
+      return pd.DataFrame(values, period)
+
+  wolvesRe = System(p0 = 139, t0 = 1995)
+  ax = reintroduce_wolves(wolvesRe, 2025).plot()
+  wolves.plot(ax = ax)
+  ax.set_xlim(1995,2015)
+  ax.figure.savefig(fname)
+  return fname
+#+END_SRC
+
+#+RESULTS:
+[[file:graphs/wolf-reintroduce.png]]
