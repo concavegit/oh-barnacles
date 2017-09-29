@@ -20,7 +20,6 @@ def historical_data_set(data_set = "data/wolf_data_set.csv", index_col="Year"):
 def kill_wolves(starting_amount=139, starting_year=1915, ending_year=1922):
 	"""
 	Simulates wolf hunting in yellowstone based on historical data.
-	TODO Eliminate numbers of wolves less than 0
 	"""
 	period = np.arange(starting_year, ending_year, .01)
 	values = starting_amount - (period - ending_year + 20) ** 2 + 170
