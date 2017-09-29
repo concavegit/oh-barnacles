@@ -20,6 +20,9 @@ def historical_data_set(data_set = "data/wolf_data_set.csv", index_col="Year"):
 def kill_wolves(starting_amount=139, starting_year=1915, ending_year=1922):
 	"""
 	Simulates wolf hunting in yellowstone based on historical data.
+	starting_amount : The number of wolves before hunting started.
+	starting_year : The year hunting started
+	ending_year: The year hunting ended.
 	"""
 	period = np.arange(starting_year, ending_year, .01)
 	values = starting_amount - (period - ending_year + 20) ** 2 + 170
@@ -34,6 +37,9 @@ def kill_wolves(starting_amount=139, starting_year=1915, ending_year=1922):
 def reintroduce_wolves(starting_amount = 139, starting_year = 1995, ending_year=2025):
 	"""
 	Reintroduces wolves to population.
+	starting_amount : The amount of wolves initially introduced
+	starting_year : The year reintroduction started.
+	ending_year : The year reintroduction ended.
 	TODO Add dampening factor to sine function so that as time goes on the amplitude decreases.
 	"""
 	# tune the growth rate or multiplier to tune the model.
@@ -46,6 +52,7 @@ def reintroduce_wolves(starting_amount = 139, starting_year = 1995, ending_year=
 
 def get_elk_data(wolf_graph, starting_year = 139, ending_year = 2025):
 	"""
+	Converts wolf data into elk data.
 	"""
 	period = np.arange(starting_year, ending_year, .01)
 	values = -3 * (wolf_graph - 142)**2 + 12000
