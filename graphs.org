@@ -10,7 +10,6 @@
 
   plt.rc('text', usetex=True)
   plt.rc('font', family='serif')
-  plt.style.use('ggplot')
 
   elk = pd.read_csv('data/elk_data_set.csv').set_index('Year')
   wolves = pd.read_csv('data/wolf_data_set.csv').set_index('Year')
@@ -26,6 +25,18 @@
           if system.results[y] < 0:
               system.results[y] = 0
 
+
+  def lv(elkSys, wolvesSys, t_end, alpha, beta, delta, gamma):
+      elk = TimeSeries()
+      wolves = TimeSeries()
+      elk[elkSys.t0] = elkSys.p0
+      wolves[elkSys.t0] = wolvesSys.p0
+      for t in np.arange(elkSys.t0, t_end):
+          dElk = alpha * elk[t] - beta * elk[t] * wolves[t]
+          dWolves = delta * elk[t] * wolves[t] - gamma * wolves[t]
+          elk[t + 1] = elk[t] + dElk
+          wolves[t + 1] = wolves[t] + dWolves
+      return pd.DataFrame({'Wolves': wolves, 'Elk': elk})
 #+END_SRC
 
 #+RESULTS: pre
@@ -74,12 +85,12 @@
 #+END_SRC
 
 #+RESULTS:
-:        Historical Wolf Population      Elk
-: Year                                      
-: 2001                        132.0  11921.0
-: 2003                        174.0   9227.0
-: 2011                         98.0   6600.0
-: 2015                         98.0   5500.0
+:       Wolves      Elk
+: Year                 
+: 2001   132.0  11921.0
+: 2003   174.0   9227.0
+: 2011    98.0   6600.0
+: 2015    98.0   5500.0
 
 #+BEGIN_SRC python :noweb yes :results output :exports both
   <<pre>>
@@ -88,6 +99,12 @@
 #+END_SRC
 
 #+RESULTS:
+:       Wolves      Elk           predElk
+: Year                                   
+: 2001   132.0  11921.0  11700.0000000000
+: 2003   174.0   9227.0  8928.00000000000
+: 2011    98.0   6600.0  6192.00000000000
+: 2015    98.0   5500.0  6192.00000000000
 
 #+BEGIN_SRC python :noweb yes :results file :exports both :var fname="graphs/wolf-death.png"
   <<pre>>
@@ -158,3 +175,57 @@ Wolf hunting after 2015:
 
 #+RESULTS:
 [[file:graphs/wolf-kill.png]]
+
+#+BEGIN_SRC python :noweb yes :results file :exports both :var fname="graphs/lv.png"
+  <<pre>>
+  wolveslv = System(t0 = 1995, p0 = 21)
+  elklv = System(t0 = 1995, p0 = 1677)
+  df = lv(elkSys = elklv, wolvesSys = wolveslv, t_end = 2015, alpha = 1, beta = 1, delta = 1, gamma = 1)
+  ax = wolves.plot()
+  elk.plot(ax = ax)
+  df.plot(ax = ax)
+  ax.figure.savefig(fname)
+  return(fname)
+#+END_SRC
+
+#+RESULTS:
+[[file:graphs/lv.png]]
+
+#+BEGIN_SRC python :noweb yes :results file :exports both :var fname="graphs/project.png"
+  <<pre>>
+
+
+  def reintroduce_wolves(starting_amount=139, starting_year=1995, ending_year=2025):
+      """
+      Reintroduces wolves to population.
+      starting_amount : The amount of wolves initially introduced
+      starting_year : The year reintroduction started.
+      ending_year : The year reintroduction ended.
+      TODO Add dampening factor to sine function so that as time goes on the amplitude decreases.
+      """
+      # tune the growth rate or multiplier to tune the model.
+      growth_rate = 40
+      multiplier = .1
+      period = np.arange(starting_year, ending_year, .01)
+      values = starting_amount + growth_rate * \
+          (np.sin(multiplier * np.pi * period))
+      graph = pd.DataFrame(values, period)
+      return graph
+
+
+  wol = reintroduce_wolves(starting_year=2017)
+  wol.columns = ['Wolves']
+  woll = list(wol['Wolves'])
+  elkl = [int(rhs.subs(w, x)) for x in woll]
+
+  wol['Elk'] = elkl
+  ax = wol.plot()
+  ax.set_title('Projected Wolf Reintroduction in 2015')
+  ax.set_xlabel('Year')
+  ax.set_ylabel('Population')
+  ax.figure.savefig(fname)
+  return fname
+#+END_SRC
+
+#+RESULTS:
+[[file:graphs/project.png]]
