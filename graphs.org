@@ -223,6 +223,7 @@ Wolf hunting after 2015:
   ax.set_title('Projected Wolf Reintroduction in 2015')
   ax.set_xlabel('Year')
   ax.set_ylabel('Population')
+  plt.tight_layout()
   ax.figure.savefig(fname)
   return fname
 #+END_SRC
